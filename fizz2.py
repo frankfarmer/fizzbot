@@ -36,10 +36,30 @@ def try_answer(question_url, answer):
         print_response(response)
         return response
 
+def mkanswer(question_data):
+    if 'exampleResponse' in question_data and question_data['exampleResponse']['answer'] == 'COBOL':
+        return 'COBOL'
+    if question_data['numbers']:
+        return fizzbuzz(question_data['rules'], question_data['numbers'])
+    print question_data
+
+def fizzbuzz(rules, numbers):
+    return ' '.join([fizzify(x, rules) for x in numbers])
+
+def fizzify(x, rules):
+    s = ''
+    for rule in rules:
+        if x % rule['number'] == 0:
+            s += rule['response']
+    if s:
+        return s
+    else:
+        return str(x)
+
 # keep trying answers until a correct one is given
-def get_correct_answer(question_url):
+def get_correct_answer(question_url, question_data):
     while True:
-        answer = raw_input('Enter your answer:\n')
+        answer = mkanswer(question_data)
 
         response = try_answer(question_url, answer)
 
@@ -63,7 +83,7 @@ def do_question(domain, question_url):
     next_question = question_data.get('nextQuestion')
 
     if next_question: return next_question
-    return get_correct_answer(question_url)
+    return get_correct_answer(question_url, question_data)
 
 
 def main():
